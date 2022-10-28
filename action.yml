@@ -1,0 +1,29 @@
+name: 'Java CI Build'
+description: 'Build a Java CI project with maven and Docker'
+runs:
+  using: "composite"
+  steps:
+      # build the project in a docker container with a specific maven settings.xml
+      # it uses env variables from github secrets for the credentials
+      # to github, dockerhub and sonar.
+      - name: Build and deploy site with Maven
+        run: ${{ github.action_path }}/mvn.sh site:site site-deploy
+        shell: bash
+      - name: Notify dedicated teams channel of Success
+        uses: dragos-cojocari/ms-teams-notification@v1.0.0
+        if: ${{ success() }}
+        with:
+          github-token: ${{ github.token }} # this will use the runner's token.
+          ms-teams-webhook-uri: ${{ env.MSTEAMS_WEBHOOK }}
+          notification-summary: Web site deployed.
+          notification-color: 28a745
+          timezone: Europe/Paris
+      - name: Notify dedicated teams channel of Failure
+        uses: dragos-cojocari/ms-teams-notification@v1.0.0
+        if: ${{ failure() }}
+        with:
+          github-token: ${{ github.token }} # this will use the runner's token.
+          ms-teams-webhook-uri: ${{ env .MSTEAMS_WEBHOOK }}
+          notification-summary: Failed to deploy web site.
+          notification-color: dc3545
+          timezone: Europe/Paris
