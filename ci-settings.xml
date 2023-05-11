@@ -7,7 +7,7 @@
         <server>
             <id>github</id>
             <username>${env.GITHUBLOGIN}</username>
-            <password>${env.GITHUBPASSWORD}</password>
+            <password>${env.GITHUBTOKEN}</password>
         </server>
         <server>
             <id>dockerhub</id>
